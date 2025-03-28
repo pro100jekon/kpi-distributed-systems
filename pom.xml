@@ -31,6 +31,7 @@
 		<module>facade-service</module>
 		<module>logging-service</module>
 		<module>messages-service</module>
+		<module>hazelcast</module>
 	</modules>
 	<properties>
 		<java.version>24</java.version>

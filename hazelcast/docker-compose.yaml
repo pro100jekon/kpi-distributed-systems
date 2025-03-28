@@ -1,0 +1,29 @@
+services:
+  hz1:
+    build:
+      context: ./
+    image: kpi-hazelcast
+    container_name: hz-1
+    environment:
+      INSTANCES: hz-2,hz-3
+      #LOCK_TYPE: OPTIMISTIC_LOCK
+      QUEUE: READ
+  hz2:
+    image: kpi-hazelcast
+    container_name: hz-2
+    environment:
+      # INSTANCES: hz-1,hz-3
+      # FILL_MAP: true
+      #LOCK_TYPE: OPTIMISTIC_LOCK
+      QUEUE: WRITE
+  hz3:
+    image: kpi-hazelcast
+    container_name: hz-3
+    environment:
+      INSTANCES: hz-1,hz-2
+      #LOCK_TYPE: OPTIMISTIC_LOCK
+      QUEUE: READ
+  management-center:
+    image: hazelcast/management-center:5.3.4
+    ports:
+      - "8080:8080"
