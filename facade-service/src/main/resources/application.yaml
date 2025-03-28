@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: facade-service
+
+server:
+  port: 8085
+
+http-client:
+  logging-service-url: http://${LOGGING_SERVICE_HOST_PORT:localhost:8087}/logging
+  messaging-service-url: http://${MESSAGING_SERVICE_HOST_PORT:localhost:8089}/messaging

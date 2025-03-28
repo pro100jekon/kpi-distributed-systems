@@ -1,0 +1,29 @@
+### Write a new message [1]
+POST http://localhost:8085/facade/write-log
+Content-Type: application/json
+
+{
+  "msg": "This is message one"
+}
+
+### Write a new message [2]
+POST http://localhost:8085/facade/write-log
+Content-Type: application/json
+
+{
+  "msg": "I drank coffee today"
+}
+
+
+### Get all messages and logs
+GET http://localhost:8085/facade/logs-messages
+Accept: application/json
+
+### Try to send the same UUID 2nd time
+POST http://localhost:8087/logging
+Content-Type: application/json
+
+{
+  "uuid": "1a299188-177f-450e-85b7-36f0f70b8a88",
+  "msg": "I like tea"
+}
