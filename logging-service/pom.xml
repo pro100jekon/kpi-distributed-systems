@@ -12,4 +12,11 @@
     <version>1.0.0-SNAPSHOT</version>
     <name>logging-service</name>
     <description>Microservice that captures events and stores them</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast-spring</artifactId>
+        </dependency>
+    </dependencies>
 </project>

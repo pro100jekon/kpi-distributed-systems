@@ -1,0 +1,9 @@
+hazelcast:
+  instance-name: logging-service-instance
+  network:
+    port:
+      auto-increment: true
+      port: 5701
+  map:
+    logs:
+      in-memory-format: BINARY

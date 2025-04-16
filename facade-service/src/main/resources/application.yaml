@@ -6,5 +6,5 @@ server:
   port: 8085
 
 http-client:
-  logging-service-url: http://${LOGGING_SERVICE_HOST_PORT:localhost:8087}/logging
+  logging-service-url: http://${LOGGING_SERVICE_HOST_PORT:localhost:8090,localhost:8091,localhost:8092}/logging
   messaging-service-url: http://${MESSAGING_SERVICE_HOST_PORT:localhost:8089}/messaging
