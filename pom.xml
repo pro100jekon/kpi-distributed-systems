@@ -31,7 +31,8 @@
 		<module>facade-service</module>
 		<module>logging-service</module>
 		<module>messages-service</module>
-	</modules>
+        <module>config-server</module>
+    </modules>
 	<properties>
 		<java.version>24</java.version>
 	</properties>
