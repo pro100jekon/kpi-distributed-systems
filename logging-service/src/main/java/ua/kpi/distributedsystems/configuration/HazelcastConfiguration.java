@@ -12,6 +12,7 @@ public class HazelcastConfiguration {
 
     @Bean
     public IMap<UUID, String> map(HazelcastInstance instance) {
+        System.out.println(instance.getConfig().getMapConfig("logs"));
         return instance.getMap("logs");
     }
 }

@@ -7,3 +7,6 @@ hazelcast:
   map:
     logs:
       in-memory-format: BINARY
+      backup-count: 2
+      async-backup-count: 0
+      read-backup-data: true
