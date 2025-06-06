@@ -6,6 +6,7 @@ import ua.kpi.distributedsystems.client.LoggingClient;
 import ua.kpi.distributedsystems.client.MessagingClient;
 import ua.kpi.distributedsystems.model.downstream.LogMessageRequest;
 import ua.kpi.distributedsystems.model.dto.LogMessageResponseDto;
+import ua.kpi.distributedsystems.model.dto.MessageDto;
 
 import java.util.UUID;
 
@@ -14,16 +15,21 @@ public class FacadeServiceImpl implements FacadeService {
 
     private final LoggingClient loggingClient;
     private final MessagingClient messagingClient;
+    private final MessagesProducerService messagesProducerService;
 
-    public FacadeServiceImpl(LoggingClient loggingClient, MessagingClient messagingClient) {
+    public FacadeServiceImpl(LoggingClient loggingClient, MessagingClient messagingClient, MessagesProducerService messagesProducerService) {
         this.loggingClient = loggingClient;
         this.messagingClient = messagingClient;
+        this.messagesProducerService = messagesProducerService;
     }
 
     @Override
     public Mono<Void> writeLog(String msg) {
+        var uuid = UUID.randomUUID();
         return loggingClient
-                .writeLog(new LogMessageRequest(UUID.randomUUID(), msg));
+                .writeLog(new LogMessageRequest(uuid, msg))
+                .then(messagesProducerService.sendMessage(uuid, new MessageDto(msg)))
+                .then();
     }
 
     @Override

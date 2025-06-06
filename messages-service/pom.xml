@@ -11,5 +11,20 @@
     <artifactId>messages-service</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>messages-service</name>
-    <description>Stub service</description>
+    <description>Kafka messaging service</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.projectreactor.kafka</groupId>
+            <artifactId>reactor-kafka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+    </dependencies>
 </project>

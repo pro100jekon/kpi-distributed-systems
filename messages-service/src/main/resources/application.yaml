@@ -1,6 +1,29 @@
 spring:
   application:
     name: messaging-service
+  kafka:
+    bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: ua.kpi.distributedsystems.model.dto
+
+---
+spring:
+  config:
+    activate:
+      on-profile: one
+
+server:
+  port: 8088
+
+---
+spring:
+  config:
+    activate:
+      on-profile: two
 
 server:
   port: 8089

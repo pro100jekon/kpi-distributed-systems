@@ -1,4 +1,6 @@
 package ua.kpi.distributedsystems.model.dto;
 
-public record MessageDto(String msg) {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record MessageDto(@JsonProperty String msg) {
 }

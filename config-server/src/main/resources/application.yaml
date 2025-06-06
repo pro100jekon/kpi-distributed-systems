@@ -8,4 +8,5 @@ config:
       - http://localhost:8091
       - http://localhost:8092
     messages-service:
+      - http://localhost:8088
       - http://localhost:8089
