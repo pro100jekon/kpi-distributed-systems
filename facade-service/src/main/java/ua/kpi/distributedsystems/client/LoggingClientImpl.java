@@ -2,9 +2,7 @@ package ua.kpi.distributedsystems.client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.reactive.function.client.ClientRequest;
-import org.springframework.web.reactive.function.client.ClientResponse;
-import org.springframework.web.reactive.function.client.ExchangeFunction;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
@@ -12,7 +10,6 @@ import ua.kpi.distributedsystems.model.downstream.LogMessageRequest;
 import ua.kpi.distributedsystems.model.downstream.LogResponse;
 
 import java.time.Duration;
-import java.util.List;
 
 public class LoggingClientImpl implements LoggingClient {
 
@@ -21,11 +18,11 @@ public class LoggingClientImpl implements LoggingClient {
 
     private final WebClient webClient;
 
-    public LoggingClientImpl(List<String> hosts) {
+    public LoggingClientImpl(DiscoveryClient discoveryClient) {
         this.webClient = WebClient.builder()
                 .defaultHeader("Content-Type", "application/json")
                 .defaultHeader("Accept", "application/json")
-                .filter(new RoundRobinExchangeFilter(hosts))
+                .filter(new RoundRobinExchangeFilter(discoveryClient, "logging-service"))
                 .build();
     }
 

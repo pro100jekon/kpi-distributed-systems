@@ -1,6 +1,7 @@
 spring:
-  application:
-    name: logging-service
+  hazelcast:
+    config: http://localhost:8500/v1/kv/config/logging-service/hazelcast?raw
+
 
 ---
 spring:

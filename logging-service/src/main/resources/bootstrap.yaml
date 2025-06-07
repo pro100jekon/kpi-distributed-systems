@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: logging-service
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        enabled: true
+        register: true
+        instanceId: ${spring.application.name}:${random.value}
+        health-check-path: /actuator/health
+        health-check-interval: 10s
+        ip-address: 172.21.96.1
+        prefer-ip-address: on
+        query-passing: on
+        health-check-timeout: 2s
+      config:
+        enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

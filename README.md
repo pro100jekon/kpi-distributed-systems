@@ -1,125 +1,31 @@
-### Налаштування кластера Kafka
-#### Створимо тестовий топік на машині №2
+### Всі мікросервіси мають самостійно динамічно реєструватись при старті у Consul, кожного з сервісів може бути запущено кілька екземплярів (це буде відображатись як кількість instances на UI)
 
-![img.png](.img/lab4/img.png)
+![img.png](.img/lab5/img.png)
 
-#### Перевіримо що топік був створений на машині №1
+### При звертанні facade-service до logging-service та messages-service, IP-адреси (і порти) мають зчитуватись facade-service з Consul. Немає бути задано в коді чи конфігураціях статичних значень адрес.
 
-![img_1.png](.img/lab4/img_1.png)
+![img_11.png](.img/lab5/img_11.png)
 
-#### Подивимось на топік з машини №3
+### Налаштування для клієнтів Hazelcast мають зберігатись як key/value у Consul і зчитуватись logging-service
 
-![img_2.png](.img/lab4/img_2.png)
+![img_4.png](.img/lab5/img_4.png)
 
-#### На машинах №1 та №2 запустимо `consumer` та `producer`
+![img_5.png](.img/lab5/img_5.png)
 
-![img_3.png](.img/lab4/img_3.png)
-![img_4.png](.img/lab4/img_4.png)
-![img_5.png](.img/lab4/img_5.png)
-![img_6.png](.img/lab4/img_6.png)
+### Налаштування для Message Queue (адреса, назва черги, …) мають зберігатись як key/value у Consul і зчитуватись facade-service та messages-service
 
-#### Реплікація даних працює
+![img_6.png](.img/lab5/img_6.png)
 
-## Базова функціональність системи
-Проєкт складається з трьох модулів: `messages-service`, `logging-service` та `facade-service`. Використовується сервер для асинхронної обробки даних Netty (замість звичайного Tomcat Embedded) + Spring WebFlux.
-Додатково було додано щось на кшталт конфіг сервера: `config-server`
-Загальна структура сервісів виглядає наступним чином:
+![img_7.png](.img/lab5/img_7.png)
 
-![img_8.png](.img/lab4/img_8.png)
+### Продемонструвати, що у випадку відключення екземпляру певного мікросервісу, це буде відображатись у Consul (відключений екземпляр сервісу змінить статус) , а виклики будуть перенаправлятись до інших працюючих екземплярів.
 
-### Архітектура facade-service (http://localhost:8085)
-Мається два ендпоїнти - `POST /facade/write-log` та `GET /facade/logs-messages`
+![img_9.png](.img/lab5/img_9.png)
 
-#### POST /facade/write-log
-Створює JSON об'єкт, та надсилає його до `POST logging-service/logging`, із наявним механізмом retry (5 спроб через кожні 2 секунди).
+#### Spring Boot запускає процес дереєстрації при спробі кільнути процес, тому довелося його стопати через дебагер
 
-![img.png](.img/img.png)
+![img_8.png](.img/lab5/img_8.png)
 
-#### GET /facade/logs-messages
-Повертає агрегований JSON об'єкт, в якому міститься респонс із `GET logging-service/logging` та `GET messaging-service/messaging`.
-`logging-service` повертає масив, тому конкатенація відбувається на рівні фасаду.
+![img_10.png](.img/lab5/img_10.png)
 
-### Архітектура logging-service (http://localhost:8090, http://localhost:8091, http://localhost:8092)
-Сервіси було зконфігуровано у Hazelcast кластер:
-
-![img.png](.img/lab3/img.png)
-
-Мається два ендпоїнти - `POST /logging` та `GET /logging`
-
-#### POST /logging
-Додається новий запис до `IMap` за ключом UUID.
-Для дедуплікації запитів (у разі якщо таке стається) використовується UUID із запиту, який служить в якості "Idempotency Key".
-
-![img_1.png](.img/img_1.png)
-
-#### GET /logging
-Повертається об'єкт із усіма повідомленнями як JSON array.
-
-### Архітектура messaging-service (http://localhost:8088, http://localhost:8089)
-Мається ендпоїнт `GET /messaging`, який повертає всі повідомлення, що були завантажені в мапу в пам'яті.
-
-Консьюмери розподілились таким чином.
-
-![img_9.png](.img/lab4/img_9.png)
-
-#### Завдання
-
-### Записати 10 повідомлень через `facade-service`
-
-![img_10.png](.img/lab4/img_10.png)
-![img_11.png](.img/lab4/img_11.png)
-
-### Показати які повідомлення отримав кожен з екземплярів `logging-service` та `facade-service`
-
-#### Розподілення логів
-
-![img_14.png](.img/lab4/img_14.png)
-![img_15.png](.img/lab4/img_15.png)
-![img_16.png](.img/lab4/img_16.png)
-
-#### Розподілення повідомлень
-
-![img_12.png](.img/lab4/img_12.png)
-![img_13.png](.img/lab4/img_13.png)
-
-### Декілька разів викликати HTTP GET на `facade-service` та отримати об'єднані дві множини повідомлень
-
-![img_17.png](.img/lab4/img_17.png)
-![img_18.png](.img/lab4/img_18.png)
-
-
-### Перевірка відмовостійкості черги повідомлень
-
-#### Вимкніть обидва екземпляри `messaging-service`
-
-![img_19.png](.img/lab4/img_19.png)
-
-#### Відправте 10 (буде 12) повідомлень через `facade-service`
-
-![img_21.png](.img/lab4/img_21.png)
-![img_20.png](.img/lab4/img_20.png)
-
-#### Вимкніть один із серверів MQ
-
-Спочатку було встановлено 3 партішени, тобто на кожен з них кластер визначає свого лідера. Напевне, для виконання задачі треба було зробити 1 партішен, тому перестворимо топік з цією конфігурацією.
-
-![img_22.png](.img/lab4/img_22.png)
-
-Перезапустимо всю систему та побачимо оновлений кластер. Лідер - `kafka-2`
-
-![img_23.png](.img/lab4/img_23.png)
-![img_24.png](.img/lab4/img_24.png)
-![img_25.png](.img/lab4/img_25.png)
-
-Вимикаємо `kafka-2`
-
-![img_26.png](.img/lab4/img_26.png)
-
-Запускаємо `messaging-service` та бачимо, що до партішену під'єднався тільки один інстанс, та вичитав всю чергу
-
-![img_27.png](.img/lab4/img_27.png)
-
-Фундаментальне правило Kafka - один `listener` на один партішен на одну консьюмер-групу.
-Якщо задати іншому інстансу `messaging-service` іншу групу, то повідомлення будуть прочитані на обох інстансах.
-
-![img_28.png](.img/lab4/img_28.png)
+#### Клієнт самостійно дізнається про здорові сервіси, і робить запити виключно на них
